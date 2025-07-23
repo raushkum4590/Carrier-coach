@@ -376,7 +376,7 @@ Responsibilities:
               <h3 className="text-lg font-bold text-green-800 dark:text-green-200">Key Strengths</h3>
             </div>
             <ul className="space-y-2">
-              {analysis.strengths.map((strength, index) => (
+              {(Array.isArray(analysis.strengths) ? analysis.strengths : []).map((strength, index) => (
                 <li key={index} className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-green-700 dark:text-green-300">{strength}</span>
@@ -398,7 +398,9 @@ Responsibilities:
               <h3 className="text-lg font-bold text-amber-800 dark:text-amber-200">Areas for Improvement</h3>
             </div>
             <ul className="space-y-2">
-              {(analysis.improvements || analysis.weaknesses || []).map((improvement, index) => (
+              {(Array.isArray(analysis.improvements) ? analysis.improvements : 
+                Array.isArray(analysis.weaknesses) ? analysis.weaknesses : 
+                []).map((improvement, index) => (
                 <li key={index} className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-amber-700 dark:text-amber-300">{improvement}</span>
@@ -425,14 +427,14 @@ Responsibilities:
                 <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
                   <p className="font-semibold text-indigo-700 dark:text-indigo-300 mb-3">Technical Skills</p>
                   <ul className="space-y-2">
-                    {analysis.skillsAnalysis.technical.slice(0, 5).map((skill, index) => (
+                    {(Array.isArray(analysis.skillsAnalysis.technical) ? analysis.skillsAnalysis.technical : []).slice(0, 5).map((skill, index) => (
                       <li key={index} className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400">
                         <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
                         <span className="text-sm">{skill}</span>
                       </li>
                     ))}
-                    {analysis.skillsAnalysis.technical.length > 5 && (
-                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{analysis.skillsAnalysis.technical.length - 5} more</li>
+                    {(Array.isArray(analysis.skillsAnalysis.technical) ? analysis.skillsAnalysis.technical : []).length > 5 && (
+                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{(Array.isArray(analysis.skillsAnalysis.technical) ? analysis.skillsAnalysis.technical : []).length - 5} more</li>
                     )}
                   </ul>
                 </div>
@@ -442,14 +444,14 @@ Responsibilities:
                 <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
                   <p className="font-semibold text-indigo-700 dark:text-indigo-300 mb-3">Soft Skills</p>
                   <ul className="space-y-2">
-                    {analysis.skillsAnalysis.soft.slice(0, 5).map((skill, index) => (
+                    {(Array.isArray(analysis.skillsAnalysis.soft) ? analysis.skillsAnalysis.soft : []).slice(0, 5).map((skill, index) => (
                       <li key={index} className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400">
                         <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
                         <span className="text-sm">{skill}</span>
                       </li>
                     ))}
-                    {analysis.skillsAnalysis.soft.length > 5 && (
-                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{analysis.skillsAnalysis.soft.length - 5} more</li>
+                    {(Array.isArray(analysis.skillsAnalysis.soft) ? analysis.skillsAnalysis.soft : []).length > 5 && (
+                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{(Array.isArray(analysis.skillsAnalysis.soft) ? analysis.skillsAnalysis.soft : []).length - 5} more</li>
                     )}
                   </ul>
                 </div>
@@ -459,14 +461,14 @@ Responsibilities:
                 <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
                   <p className="font-semibold text-indigo-700 dark:text-indigo-300 mb-3">Skills to Develop</p>
                   <ul className="space-y-2">
-                    {analysis.skillsAnalysis.missing.slice(0, 5).map((skill, index) => (
+                    {(Array.isArray(analysis.skillsAnalysis.missing) ? analysis.skillsAnalysis.missing : []).slice(0, 5).map((skill, index) => (
                       <li key={index} className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400">
                         <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
                         <span className="text-sm">{skill}</span>
                       </li>
                     ))}
-                    {analysis.skillsAnalysis.missing.length > 5 && (
-                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{analysis.skillsAnalysis.missing.length - 5} more</li>
+                    {(Array.isArray(analysis.skillsAnalysis.missing) ? analysis.skillsAnalysis.missing : []).length > 5 && (
+                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{(Array.isArray(analysis.skillsAnalysis.missing) ? analysis.skillsAnalysis.missing : []).length - 5} more</li>
                     )}
                   </ul>
                 </div>
@@ -487,7 +489,7 @@ Responsibilities:
               <h3 className="text-lg font-bold text-purple-800 dark:text-purple-200">Career Suggestions</h3>
             </div>
             <ul className="space-y-2">
-              {analysis.careerSuggestions.map((suggestion, index) => (
+              {(Array.isArray(analysis.careerSuggestions) ? analysis.careerSuggestions : []).map((suggestion, index) => (
                 <li key={index} className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-purple-700 dark:text-purple-300">{suggestion}</span>
@@ -514,14 +516,14 @@ Responsibilities:
                 <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
                   <p className="font-semibold text-cyan-700 dark:text-cyan-300 mb-2">Matching Skills</p>
                   <ul className="space-y-1">
-                    {analysis.jobMatch.matchingSkills.slice(0, 3).map((skill, index) => (
+                    {(Array.isArray(analysis.jobMatch.matchingSkills) ? analysis.jobMatch.matchingSkills : []).slice(0, 3).map((skill, index) => (
                       <li key={index} className="flex items-center space-x-2 text-cyan-600 dark:text-cyan-400">
                         <div className="w-1 h-1 bg-cyan-500 rounded-full"></div>
                         <span className="text-sm">{skill}</span>
                       </li>
                     ))}
-                    {analysis.jobMatch.matchingSkills.length > 3 && (
-                      <li className="text-xs text-cyan-500 dark:text-cyan-400">+{analysis.jobMatch.matchingSkills.length - 3} more</li>
+                    {(Array.isArray(analysis.jobMatch.matchingSkills) ? analysis.jobMatch.matchingSkills : []).length > 3 && (
+                      <li className="text-xs text-cyan-500 dark:text-cyan-400">+{(Array.isArray(analysis.jobMatch.matchingSkills) ? analysis.jobMatch.matchingSkills : []).length - 3} more</li>
                     )}
                   </ul>
                 </div>
@@ -530,14 +532,14 @@ Responsibilities:
                 <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
                   <p className="font-semibold text-cyan-700 dark:text-cyan-300 mb-2">Skills to Develop</p>
                   <ul className="space-y-1">
-                    {analysis.jobMatch.missingSkills.slice(0, 3).map((skill, index) => (
+                    {(Array.isArray(analysis.jobMatch.missingSkills) ? analysis.jobMatch.missingSkills : []).slice(0, 3).map((skill, index) => (
                       <li key={index} className="flex items-center space-x-2 text-cyan-600 dark:text-cyan-400">
                         <div className="w-1 h-1 bg-cyan-500 rounded-full"></div>
                         <span className="text-sm">{skill}</span>
                       </li>
                     ))}
-                    {analysis.jobMatch.missingSkills.length > 3 && (
-                      <li className="text-xs text-cyan-500 dark:text-cyan-400">+{analysis.jobMatch.missingSkills.length - 3} more</li>
+                    {(Array.isArray(analysis.jobMatch.missingSkills) ? analysis.jobMatch.missingSkills : []).length > 3 && (
+                      <li className="text-xs text-cyan-500 dark:text-cyan-400">+{(Array.isArray(analysis.jobMatch.missingSkills) ? analysis.jobMatch.missingSkills : []).length - 3} more</li>
                     )}
                   </ul>
                 </div>
@@ -558,7 +560,7 @@ Responsibilities:
               <h3 className="text-lg font-bold text-rose-800 dark:text-rose-200">Action Items</h3>
             </div>
             <ul className="space-y-3">
-              {analysis.actionItems.map((item, index) => (
+              {(Array.isArray(analysis.actionItems) ? analysis.actionItems : []).map((item, index) => (
                 <li key={index} className="flex items-start space-x-3">
                   <div className="w-6 h-6 bg-rose-100 dark:bg-rose-800 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-rose-600 dark:text-rose-400 text-xs font-bold">{index + 1}</span>
@@ -603,7 +605,7 @@ Responsibilities:
                       <div>
                         <p className="text-sm font-medium text-teal-700 dark:text-teal-300 mb-1">Suitable Roles:</p>
                         <ul className="text-xs text-teal-600 dark:text-teal-400 space-y-1">
-                          {analysis.careerSuggestions.suitableRoles.slice(0, 3).map((role, index) => (
+                          {(Array.isArray(analysis.careerSuggestions.suitableRoles) ? analysis.careerSuggestions.suitableRoles : []).slice(0, 3).map((role, index) => (
                             <li key={index}>• {role}</li>
                           ))}
                         </ul>
