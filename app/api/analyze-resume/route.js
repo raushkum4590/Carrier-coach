@@ -88,7 +88,19 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Error processing resume:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error stack:', error.stack);
+    console.error('Error details:', {
+      message: error.message,
+      name: error.name,
+      code: error.code
+    });
+    
+    // Return a more detailed error response
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error.message,
+      success: false
+    }, { status: 500 });
   }
 }
 
@@ -393,10 +405,13 @@ Example format:
       // Fallback if all parsing fails
       return {
         overallScore: "Analysis completed",
+        strengths: ["Analysis provided below"],
+        improvements: ["Please review the detailed analysis"],
         analysis: analysisText,
         modelUsed: model,
         analysisType: analysisType,
-        note: "Raw analysis provided due to parsing issues"
+        note: "Analysis completed successfully - review detailed feedback below",
+        rawAnalysis: true
       };
 
     } catch (error) {

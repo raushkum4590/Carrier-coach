@@ -4,6 +4,9 @@ import { hashPassword, validateEmail, validatePassword } from '../../../../lib/a
 
 export async function POST(request) {
   try {
+    console.log('Registration attempt started');
+    console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    
     const { name, email, password } = await request.json();
 
     // Validation
@@ -28,7 +31,10 @@ export async function POST(request) {
       );
     }
 
+    console.log('Attempting MongoDB connection...');
     const client = await clientPromise;
+    console.log('MongoDB connection successful');
+    
     const db = client.db('ai_career_coach');
     const users = db.collection('users');
 

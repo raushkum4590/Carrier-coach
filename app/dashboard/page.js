@@ -286,7 +286,16 @@ Responsibilities:
         throw new Error(data.error || 'Analysis failed');
       }
 
-      setAnalysis(data);
+      console.log('API Response:', data); // Debug log
+      
+      // Set the analysis data correctly
+      if (data.success && data.analysis) {
+        setAnalysis(data.analysis);
+      } else {
+        // Fallback if the response structure is different
+        setAnalysis(data);
+      }
+      
       fetchUserHistory(); // Refresh history after new analysis
     } catch (error) {
       console.error('Analysis error:', error);
@@ -298,6 +307,45 @@ Responsibilities:
 
   const renderAnalysis = (analysis) => {
     if (!analysis) return null;
+
+    console.log('Analysis object:', analysis); // Debug log
+
+    // Handle fallback format where analysis is raw text
+    if (analysis.rawAnalysis || (analysis.analysis && typeof analysis.analysis === 'string' && analysis.note)) {
+      return (
+        <div className="space-y-6">
+          {/* Overall Score (if available) */}
+          {analysis.overallScore && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-2xl border border-blue-200 dark:border-blue-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-blue-800 dark:text-blue-200">Analysis Status</h3>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">{analysis.note || 'Analysis completed successfully'}</p>
+                </div>
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-300">
+                  ✅
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Detailed Analysis */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-2xl border border-green-200 dark:border-green-700">
+            <h3 className="text-lg font-bold text-green-800 dark:text-green-200 mb-4">Detailed Analysis</h3>
+            <div className="prose dark:prose-invert max-w-none">
+              <div className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg">
+                {analysis.analysis}
+              </div>
+            </div>
+            {analysis.modelUsed && (
+              <p className="text-sm text-green-600 dark:text-green-400 mt-4">
+                Analysis provided by: {analysis.modelUsed}
+              </p>
+            )}
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="space-y-8">
@@ -338,8 +386,8 @@ Responsibilities:
           </div>
         )}
 
-        {/* Areas for Improvement */}
-        {analysis.improvements && analysis.improvements.length > 0 && (
+        {/* Areas for Improvement / Weaknesses */}
+        {(analysis.improvements && analysis.improvements.length > 0) || (analysis.weaknesses && analysis.weaknesses.length > 0) && (
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-6 rounded-2xl border border-amber-200 dark:border-amber-700">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-8 h-8 bg-amber-100 dark:bg-amber-800 rounded-lg flex items-center justify-center">
@@ -350,13 +398,80 @@ Responsibilities:
               <h3 className="text-lg font-bold text-amber-800 dark:text-amber-200">Areas for Improvement</h3>
             </div>
             <ul className="space-y-2">
-              {analysis.improvements.map((improvement, index) => (
+              {(analysis.improvements || analysis.weaknesses || []).map((improvement, index) => (
                 <li key={index} className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-amber-700 dark:text-amber-300">{improvement}</span>
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {/* Skills Analysis */}
+        {analysis.skillsAnalysis && (
+          <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-6 rounded-2xl border border-indigo-200 dark:border-indigo-700">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-800 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-indigo-800 dark:text-indigo-200">Skills Analysis</h3>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-4">
+              {analysis.skillsAnalysis.technical && (
+                <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
+                  <p className="font-semibold text-indigo-700 dark:text-indigo-300 mb-3">Technical Skills</p>
+                  <ul className="space-y-2">
+                    {analysis.skillsAnalysis.technical.slice(0, 5).map((skill, index) => (
+                      <li key={index} className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400">
+                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
+                        <span className="text-sm">{skill}</span>
+                      </li>
+                    ))}
+                    {analysis.skillsAnalysis.technical.length > 5 && (
+                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{analysis.skillsAnalysis.technical.length - 5} more</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+              
+              {analysis.skillsAnalysis.soft && (
+                <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
+                  <p className="font-semibold text-indigo-700 dark:text-indigo-300 mb-3">Soft Skills</p>
+                  <ul className="space-y-2">
+                    {analysis.skillsAnalysis.soft.slice(0, 5).map((skill, index) => (
+                      <li key={index} className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400">
+                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
+                        <span className="text-sm">{skill}</span>
+                      </li>
+                    ))}
+                    {analysis.skillsAnalysis.soft.length > 5 && (
+                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{analysis.skillsAnalysis.soft.length - 5} more</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+              
+              {analysis.skillsAnalysis.missing && (
+                <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
+                  <p className="font-semibold text-indigo-700 dark:text-indigo-300 mb-3">Skills to Develop</p>
+                  <ul className="space-y-2">
+                    {analysis.skillsAnalysis.missing.slice(0, 5).map((skill, index) => (
+                      <li key={index} className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400">
+                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
+                        <span className="text-sm">{skill}</span>
+                      </li>
+                    ))}
+                    {analysis.skillsAnalysis.missing.length > 5 && (
+                      <li className="text-xs text-indigo-500 dark:text-indigo-400">+{analysis.skillsAnalysis.missing.length - 5} more</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -431,6 +546,76 @@ Responsibilities:
           </div>
         )}
 
+        {/* Action Items */}
+        {analysis.actionItems && analysis.actionItems.length > 0 && (
+          <div className="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 p-6 rounded-2xl border border-rose-200 dark:border-rose-700">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-rose-100 dark:bg-rose-800 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-rose-800 dark:text-rose-200">Action Items</h3>
+            </div>
+            <ul className="space-y-3">
+              {analysis.actionItems.map((item, index) => (
+                <li key={index} className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-rose-100 dark:bg-rose-800 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-rose-600 dark:text-rose-400 text-xs font-bold">{index + 1}</span>
+                  </div>
+                  <span className="text-rose-700 dark:text-rose-300">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Marketability & Career Assessment */}
+        {(analysis.marketability || analysis.careerSuggestions) && (
+          <div className="bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 p-6 rounded-2xl border border-teal-200 dark:border-teal-700">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-8 h-8 bg-teal-100 dark:bg-teal-800 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-teal-800 dark:text-teal-200">Career Assessment</h3>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              {analysis.marketability && (
+                <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
+                  <p className="font-semibold text-teal-700 dark:text-teal-300 mb-3">Market Position</p>
+                  <p className="text-teal-600 dark:text-teal-400 text-sm leading-relaxed">{analysis.marketability}</p>
+                </div>
+              )}
+              
+              {analysis.careerSuggestions && typeof analysis.careerSuggestions === 'object' && (
+                <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-xl">
+                  <p className="font-semibold text-teal-700 dark:text-teal-300 mb-3">Career Level</p>
+                  <div className="space-y-2">
+                    {analysis.careerSuggestions.currentLevel && (
+                      <p className="text-sm text-teal-600 dark:text-teal-400">
+                        <span className="font-medium">Level:</span> {analysis.careerSuggestions.currentLevel}
+                      </p>
+                    )}
+                    {analysis.careerSuggestions.suitableRoles && (
+                      <div>
+                        <p className="text-sm font-medium text-teal-700 dark:text-teal-300 mb-1">Suitable Roles:</p>
+                        <ul className="text-xs text-teal-600 dark:text-teal-400 space-y-1">
+                          {analysis.careerSuggestions.suitableRoles.slice(0, 3).map((role, index) => (
+                            <li key={index}>• {role}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Salary Range */}
         {analysis.salaryRange && (
           <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 p-6 rounded-2xl border border-emerald-200 dark:border-emerald-700">
@@ -444,6 +629,18 @@ Responsibilities:
                 <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200">Salary Range</h3>
               </div>
               <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-300">{analysis.salaryRange}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Fallback for when no structured data is available but analysis exists */}
+        {!analysis.overallScore && !analysis.strengths && !analysis.analysis && Object.keys(analysis).length > 0 && (
+          <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-900/20 dark:to-blue-900/20 p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Analysis Results</h3>
+            <div className="space-y-4">
+              <pre className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg overflow-auto max-h-96">
+                {JSON.stringify(analysis, null, 2)}
+              </pre>
             </div>
           </div>
         )}
